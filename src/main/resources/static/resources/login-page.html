@@ -1,0 +1,136 @@
+<link rel="import" href="bower_components/paper-input/paper-input.html">
+<link rel="import" href="bower_components/paper-button/paper-button.html">
+<link rel="import" href="bower_components/iron-a11y-keys/iron-a11y-keys.html">
+<link rel="import" href="bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="bower_components/neon-animation/neon-animatable-behavior.html">
+<link rel="import" href="bower_components/iron-form/iron-form.html">
+
+<dom-module id="login-page">
+    <template>
+        <style>
+      :host {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: var(--dark-primary-color);
+      }
+
+      .logo {
+        font-size: 48px;
+        color: var(--default-primary-color);
+      }
+
+      .login {
+        background: #fff;
+        box-sizing: border-box;
+        padding: 20px;
+        width: 400px;
+      }
+
+      #login-button {
+        margin-top: 10px;
+        float: right;
+      }
+
+      .error-message {
+        color: #DB4437;
+      }
+
+      @media (max-width: 600px){
+        :host {
+          justify-content: flex-end;
+        }
+
+        .logo {
+          font-size: 36px;
+        }
+
+        .login {
+          width: 100vw;
+          height: 50vh;
+        }
+      }
+
+    </style>
+
+        <h1 class="logo">Billing PBB</h1>
+
+        <paper-material class="login" elevation="3">
+            <iron-a11y-keys keys="enter" on-keys-pressed="_logIn"></iron-a11y-keys>
+            <iron-form id="formLogin">
+            <form id="form" method="post" action="/auth/login">
+                <paper-input value={{username}} label="Username" name="username" required
+                             autofocus></paper-input>
+                <paper-input value="{{password}}" label="Password" name="password"
+                             type="password" required></paper-input>
+                <span class="error-message" hidden="[[!errorMessage]]">[[errorMessage]]</span>
+                <paper-button id="login-button" on-tap="_logIn" raised>Masuk</paper-button>
+            </form>
+            </iron-form>
+        </paper-material>
+    </template>
+    <script>
+class LoginPage extends Polymer.Element {
+    static get is() { return 'login-page'; }
+
+    constructor() {
+        super();
+    }
+
+    //static get behaviors() {
+    //    return {
+    //        [Polymer.NeonAnimatableBehavior]
+    //    };
+    //}
+
+    static get properties() {
+        return {
+            username: {
+                type: String,
+                readOnly: false,
+                notify: true
+            },
+            password: String,
+            errorMessage: String,
+            token: {
+                type: String,
+                notify: true
+            }
+        };
+    }
+
+    static get listeners() {
+        return {
+            'iron-form-response': '_handleLoginSuccess',
+            'iron-form-error': '_handleLoginError'
+        };
+    }
+
+    static get observers() {
+        return [
+            '_errorClearer(this.username, this.password)'
+        ]
+    }
+
+    _errorClearer() {
+        this.errorMessage = '';
+    }
+
+    _logIn() {
+        this.$.formLogin.submit();
+    }
+
+    _handleLoginSuccess(evt) {
+        this.token = evt.detail.xhr.getResponseHeader('x-auth-token');
+        console.log(this.token);
+    }
+
+    _handleLoginError() {
+        this.errorMessage = 'Username/Password Masih Salah.';
+    }
+}
+
+window.customElements.define(LoginPage.is, LoginPage);
+  </script>
+</dom-module>
