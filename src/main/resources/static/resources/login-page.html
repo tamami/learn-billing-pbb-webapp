@@ -71,66 +71,43 @@
         </paper-material>
     </template>
     <script>
-class LoginPage extends Polymer.Element {
-    static get is() { return 'login-page'; }
+Polymer({
+    is: 'login-page',
 
-    constructor() {
-        super();
-    }
+    properties: {
+        username: String,
+        password: String,
+        errorMessage: String,
+        token: {
+            type: String,
+            notify: true
+        }
+    },
 
-    //static get behaviors() {
-    //    return {
-    //        [Polymer.NeonAnimatableBehavior]
-    //    };
-    //}
+    listeners: {
+        'iron-form-response': '_handleLoginSuccess',
+        'iron-form-error': '_handleLoginError'
+    },
 
-    static get properties() {
-        return {
-            username: {
-                type: String,
-                readOnly: false,
-                notify: true
-            },
-            password: String,
-            errorMessage: String,
-            token: {
-                type: String,
-                notify: true
-            }
-        };
-    }
+    observers: ['_errorClearer(username, password)'],
 
-    static get listeners() {
-        return {
-            'iron-form-response': '_handleLoginSuccess',
-            'iron-form-error': '_handleLoginError'
-        };
-    }
-
-    static get observers() {
-        return [
-            '_errorClearer(this.username, this.password)'
-        ]
-    }
-
-    _errorClearer() {
+    _errorClearer: function() {
         this.errorMessage = '';
-    }
+    },
 
-    _logIn() {
+    _logIn: function() {
         this.$.formLogin.submit();
-    }
+    },
 
-    _handleLoginSuccess(evt) {
+    _handleLoginSuccess: function(evt) {
         this.token = evt.detail.xhr.getResponseHeader('x-auth-token');
-        console.log(this.token);
-    }
+    },
 
-    _handleLoginError() {
+    _handleLoginError: function() {
         this.errorMessage = 'Username/Password Masih Salah.';
     }
-}
 
-window.customElements.define(LoginPage.is, LoginPage);
+});
+
   </script>
 </dom-module>
