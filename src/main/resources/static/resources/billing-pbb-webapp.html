@@ -34,39 +34,34 @@
 
     </template>
     <script>
-    class BillingPbbWebapp extends Polymer.Element {
-        static get is() { return 'billing-pbb-webapp'; }
+Polymer({
+    is: 'billing-pbb-webapp',
 
-        static get properties() {
-            return {
-                token: {
-                    type: String,
-                    notify: true,
-                    value: ''
-                },
-                selected: {
-                    type: Number,
-                    notify: true,
-                    computed: '_selectPage(token)'
-                }
-            };
+    properties: {
+        token: {
+            type: String,
+            notify: true,
+            value: ''
+        },
+        selected: {
+            type: Number,
+            notify: true,
+            computed: '_selectPage(token)'
         }
+    },
 
-        static get listeners() {
-            return {
-                'logout': '_logout'
-            }
-        }
+    listeners: {
+        'logout': '_logout'
+    },
 
-        _selectPage(token) {
-            return this.token ? 1 : 0;
-        }
+    _selectPage: function(token) {
+        return this.token ? 1 : 0;
+    },
 
-        _logout() {
-            this.token = '';
-        }
+    _logout: function() {
+        console.log('_logout dipanggil');
+        this.token = '';
     }
-
-    window.customElements.define(BillingPbbWebapp.is, BillingPbbWebapp);
+});
   </script>
 </dom-module>
